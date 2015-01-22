@@ -84,13 +84,17 @@ public class GameData implements ActionListener {
         acDieingMothership = new AudioClip(this.getClass().getResource("/sounds/mothership die.wav").toString());
         
         acFlyingMothership.setCycleCount(5);
+        acFlyingMothership.setVolume(acFlyingMothership.getVolume()*0.2);
     };
 
     public void updateInvader() {
         if (invaderCoach.invaders[invaderCoach.getBottomInvader()].pos.y + invaderCoach.invaders[invaderCoach.getBottomInvader()].size[1] > 450 )
             processPlayerDeath();
         
-        if(deadInvaderDelay || nextRoundPause || pause || playerSpawn || !start || dead || showHighscores) return;
+        if(deadInvaderDelay || nextRoundPause || pause || playerSpawn || !start || dead || showHighscores){
+            acFlyingMothership.stop();
+            return;
+        }
         
         frame++;
         
@@ -102,7 +106,8 @@ public class GameData implements ActionListener {
         //spawn mothership
         if((int)(Math.random()*500) < 10 && !mothership.isAlive){
             mothership.respawnMothership();
-            acFlyingMothership.play(acFlyingMothership.getVolume()*0.2);
+            if(!acFlyingMothership.isPlaying())
+                acFlyingMothership.play();
         }
     }
     
@@ -115,6 +120,8 @@ public class GameData implements ActionListener {
         if(mothership.isAlive){
             if(mothership.pos.x<-72)
                 acFlyingMothership.stop();
+            else if(!acFlyingMothership.isPlaying())
+                acFlyingMothership.play();
             mothership.setPosition(mothership.pos.x-5, mothership.pos.y);
         }else
             acFlyingMothership.stop();
